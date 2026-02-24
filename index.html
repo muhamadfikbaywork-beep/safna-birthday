@@ -185,39 +185,51 @@ document.getElementById("secretClue").addEventListener("click", function(){
 });
 
 /* LOADING SENSOR */
-let progress=0;
-let sensorActive=false;
+/* LOADING SENSOR FIX ALL HP */
+let progress = 0;
 
-function enableSensor(){
-    sensorActive=true;
-}
+async function enableSensor() {
 
-window.addEventListener("deviceorientation",function(event){
-    if(!sensorActive) return;
-
-    let tilt=event.gamma;
-
-    if(tilt>10){
-        progress+=2;
-    }else if(tilt<-10){
-        progress+=0.5;
+    // iPhone / iOS fix
+    if (typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+            const permission = await DeviceOrientationEvent.requestPermission();
+            if (permission !== "granted") {
+                alert("Izinkan sensor dulu ya 😆");
+                return;
+            }
+        } catch (e) {
+            alert("Sensor tidak didukung 😢");
+            return;
+        }
     }
 
-    document.getElementById("progress").style.width=progress+"%";
+    window.addEventListener("deviceorientation", handleOrientation);
+    alert("Sensor aktif! Sekarang miringkan HP 😏");
+}
 
-    if(progress>=100){
+function handleOrientation(event) {
+
+    let tilt = event.gamma;
+
+    if (tilt > 10) {
+        progress += 2;
+    } else if (tilt < -10) {
+        progress += 0.5;
+    }
+
+    if (progress > 100) progress = 100;
+
+    document.getElementById("progress").style.width = progress + "%";
+
+    if (progress >= 100) {
         finishLoading();
     }
 
-    if(Math.abs(tilt)>45){
+    if (Math.abs(tilt) > 45) {
         alert("WOI jangan dibalik 😆");
     }
-});
-
-function finishLoading(){
-    document.getElementById("loading").style.display="none";
-    document.getElementById("main").style.display="block";
-    document.getElementById("birthdaySong").play();
 }
 
 /* GAME */
