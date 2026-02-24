@@ -185,12 +185,13 @@ document.getElementById("secretClue").addEventListener("click", function(){
 });
 
 /* LOADING SENSOR */
-/* LOADING SENSOR FIX ALL HP */
+//* LOADING SENSOR INTERACTIVE */
 let progress = 0;
+let normalInterval = null;
 
 async function enableSensor() {
 
-    // iPhone / iOS fix
+    // iPhone permission fix
     if (typeof DeviceOrientationEvent !== "undefined" &&
         typeof DeviceOrientationEvent.requestPermission === "function") {
         try {
@@ -206,32 +207,49 @@ async function enableSensor() {
     }
 
     window.addEventListener("deviceorientation", handleOrientation);
-    alert("Sensor aktif! Sekarang miringkan HP 😏");
+
+    // Progress normal (kalau HP tegak)
+    normalInterval = setInterval(() => {
+        if (progress < 100) {
+            progress += 0.5;
+            updateProgress();
+        }
+    }, 100);
+
+    alert("Sensor aktif! Sekarang mainkan HP nya 😏");
 }
 
 function handleOrientation(event) {
 
-    let tilt = event.gamma;
+    let tilt = event.gamma; // kiri (-) kanan (+)
 
-    if (tilt > 10) {
-        progress += 2;
-    } else if (tilt < -10) {
-        progress += 0.5;
+    if (tilt > 15) {
+        // miring kanan → cepat
+        progress += 3;
+    } 
+    else if (tilt < -15) {
+        // miring kiri → berkurang
+        progress -= 2;
     }
 
+    if (progress < 0) progress = 0;
     if (progress > 100) progress = 100;
 
-    document.getElementById("progress").style.width = progress + "%";
+    updateProgress();
 
-    if (progress >= 100) {
-        finishLoading();
-    }
-
-    if (Math.abs(tilt) > 45) {
-        alert("WOI jangan dibalik 😆");
+    if (Math.abs(tilt) > 50) {
+        alert("WOI jangan dibalik Safna 😆");
     }
 }
 
+function updateProgress(){
+    document.getElementById("progress").style.width = progress + "%";
+
+    if (progress >= 100) {
+        clearInterval(normalInterval);
+        finishLoading();
+    }
+}
 /* GAME */
 let score=0;
 let target=15;
