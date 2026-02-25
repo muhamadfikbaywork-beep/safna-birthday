@@ -6,8 +6,7 @@
 <title>Untuk Safna 🤍</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-
+*{margin:0;padding:0;box-sizing:border-box}
 body{
 font-family:sans-serif;
 background:linear-gradient(135deg,#ffdde1,#ee9ca7);
@@ -18,7 +17,6 @@ align-items:center;
 text-align:center;
 overflow:hidden;
 }
-
 section{
 display:none;
 width:100%;
@@ -30,18 +28,15 @@ align-items:center;
 justify-content:center;
 gap:18px;
 }
-
-#passwordPage{display:flex;}
-
+#passwordPage{display:flex}
 input{
-width:100%;
-max-width:250px;
 padding:12px;
 border-radius:12px;
 border:none;
 text-align:center;
+width:100%;
+max-width:250px;
 }
-
 button{
 padding:12px 20px;
 border-radius:25px;
@@ -50,8 +45,8 @@ background:#ff4d6d;
 color:white;
 font-weight:bold;
 cursor:pointer;
+margin:5px;
 }
-
 #loadingBar{
 width:100%;
 height:20px;
@@ -59,20 +54,13 @@ background:white;
 border-radius:20px;
 overflow:hidden;
 }
-
 #progress{
 height:100%;
 width:0%;
 background:#ff4d6d;
 }
-
-#tiltMessage{
-font-weight:bold;
-min-height:24px;
-}
-
-#gamePage{position:relative;}
-
+#tiltMessage{min-height:24px;font-weight:bold}
+#gamePage{position:relative}
 #finalHeart{
 position:absolute;
 width:95px;
@@ -82,26 +70,13 @@ object-fit:cover;
 cursor:pointer;
 box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
-
-@keyframes shake{
-0%{transform:rotate(0);}
-25%{transform:rotate(-10deg);}
-50%{transform:rotate(10deg);}
-75%{transform:rotate(-10deg);}
-100%{transform:rotate(0);}
-}
-
-.shake{animation:shake 0.3s;}
-
 .aesthetic{
 font-family:Georgia,serif;
 line-height:1.8;
-animation:fadeIn 2s ease forwards;
+animation:fadeIn 2s forwards;
 opacity:0;
 }
-
-@keyframes fadeIn{to{opacity:1;}}
-
+@keyframes fadeIn{to{opacity:1}}
 #endingPhoto{
 display:none;
 position:fixed;
@@ -114,13 +89,11 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 }
-
 #endingPhoto img{
 width:100%;
 height:80%;
 object-fit:cover;
 }
-
 #confettiCanvas{
 position:fixed;
 top:0;left:0;
@@ -128,24 +101,31 @@ width:100%;
 height:100%;
 pointer-events:none;
 }
-
 .heartRain{
 position:fixed;
 color:#ff4d6d;
 font-size:22px;
 animation:fall 3s linear forwards;
 }
-
 @keyframes fall{
 to{transform:translateY(100vh);opacity:0;}
 }
+#toastMsg{
+position:fixed;
+bottom:40px;
+background:#ff4d6d;
+color:white;
+padding:10px 20px;
+border-radius:20px;
+display:none;
+font-weight:bold;
+}
 </style>
 </head>
-
 <body>
 
 <section id="passwordPage">
-<h2>Masukin Password Dulu 💌</h2>
+<h2>Masukin Password 💌</h2>
 <input type="password" id="passwordInput">
 <button onclick="checkPassword()">Masuk</button>
 <p onclick="showClue()" style="cursor:pointer;">Clue? 🤭</p>
@@ -153,8 +133,8 @@ to{transform:translateY(100vh);opacity:0;}
 </section>
 
 <section id="loadingPage">
-<h2>Loading Cinta... 💛</h2>
-<button onclick="startLoading()">Aktifkan Sensor 💛</button>
+<h2>Loading Cinta 💛</h2>
+<button onclick="startLoading()">Aktifkan Sensor</button>
 <div id="loadingBar"><div id="progress"></div></div>
 <p id="tiltMessage"></p>
 <canvas id="confettiCanvas"></canvas>
@@ -169,14 +149,21 @@ to{transform:translateY(100vh);opacity:0;}
 <section id="cakePage">
 <h2>Tiup Lilinnya 🎂</h2>
 <h1 id="candle">🕯️</h1>
-
 <div id="finalMessage" class="aesthetic" style="display:none;">
-Selamat ulang tahun ya, Safna 🤍<br><br>
-Semoga semua doa baik yang kamu simpan diam-diam satu per satu jadi nyata.<br><br>
-Semoga kamu selalu dikelilingi hal-hal yang bikin kamu senyum…<br>
-dan semoga aku selalu jadi salah satu alasannya 😌✨<br><br>
-<button onclick="showEnding()">Lihat Ending 🤍</button>
+Selamat ulang tahun Safna 🤍<br><br>
+Semoga semua doa kamu satu per satu jadi nyata.<br>
+Dan semoga aku selalu jadi alasan kamu senyum 😌✨
 </div>
+</section>
+
+<section id="quizPage">
+<h2>Mini Game Tebak Kak Fikri 😎</h2>
+<h3>Level Bucinnya: MAX 🔥</h3>
+<p id="quizQuestion"></p>
+<div id="quizOptions"></div>
+<p style="font-size:12px;opacity:0.7;">
+*Coba panggil Kak Fikri di mic 🤭*
+</p>
 </section>
 
 <div id="endingPhoto">
@@ -184,72 +171,60 @@ dan semoga aku selalu jadi salah satu alasannya 😌✨<br><br>
 <h1>Kita 🤍</h1>
 </div>
 
-<audio id="ehSound" src="https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3"></audio>
+<audio id="romanticMusic" src="romantic.mp3" loop></audio>
+<div id="toastMsg"></div>
 
 <script>
 let progress=0, score=0, target=15;
 let normalInterval, sensorActive=false;
+let quizIndex=0;
+
+const quizData=[
+{question:"1. Siapa yang paling sayang Safna?",
+options:["A. Kak Fikri","B. Kak Fikri","C. Kak Fikri","D. Benar semua"]},
+{question:"2. Siapa yang paling Safna sayang?",
+options:["A. Kak Fikri","B. Kak Fikri","C. Kak Fikri","D. Benar semua"]},
+{question:"3. Siapa yang paling mirip Kak Fikri?",
+options:["A. Masimo","B. Zayn Malik","C. Nicholas Saputra","D. Semua benar"]}
+];
 
 /* PASSWORD */
 function checkPassword(){
-if(passwordInput.value==="123"){
+if(passwordInput.value==="SayangFikri"){
 passwordPage.style.display="none";
 loadingPage.style.display="flex";
 }else alert("Salah 😜");
 }
-
 function showClue(){
 clueText.innerText="Clue: gabungan Sayang + Fikri 😉";
 }
 
-/* LOADING SENSOR */
+/* LOADING */
 function startLoading(){
 progress=0;
 updateProgress();
-
-if(typeof DeviceOrientationEvent!=="undefined" &&
-typeof DeviceOrientationEvent.requestPermission==="function"){
-DeviceOrientationEvent.requestPermission().then(res=>{
-if(res==="granted") activateSensor();
-else startNormal();
-});
-}else activateSensor();
+activateSensor();
 }
-
 function activateSensor(){
 sensorActive=true;
 normalInterval=setInterval(()=>{progress+=1;updateProgress();},100);
 window.addEventListener("deviceorientation",handleOrientation);
 }
-
-function startNormal(){
-normalInterval=setInterval(()=>{progress+=1;updateProgress();},100);
-}
-
 function handleOrientation(e){
-if(!sensorActive)return;
 let tilt=e.gamma;
-
 if(tilt>15)progress+=3;
 else if(tilt<-15)progress-=3;
-
-if(tilt>45)tiltMessage.innerText="WOI sabar napa 😆";
-else if(tilt<-45)tiltMessage.innerText="Jangan dibalik dong 😭";
+if(tilt>45)tiltMessage.innerText="WOI sabar 😆";
+else if(tilt<-45)tiltMessage.innerText="Jangan dibalik 😭";
 else tiltMessage.innerText="";
-
 if(progress<0)progress=0;
 if(progress>100)progress=100;
-
 updateProgress();
 }
-
 function updateProgress(){
-progressBar=document.getElementById("progress");
-progressBar.style.width=progress+"%";
-
+document.getElementById("progress").style.width=progress+"%";
 if(progress>=100){
 clearInterval(normalInterval);
-window.removeEventListener("deviceorientation",handleOrientation);
 launchConfetti();
 setTimeout(()=>{
 loadingPage.style.display="none";
@@ -264,14 +239,10 @@ let canvas=document.getElementById("confettiCanvas");
 let ctx=canvas.getContext("2d");
 canvas.width=innerWidth;
 canvas.height=innerHeight;
-
 let pieces=[];
 for(let i=0;i<100;i++){
-pieces.push({x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*6+4});
+pieces.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+4});
 }
-
 let interval=setInterval(()=>{
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="#ff4d6d";
@@ -283,11 +254,10 @@ p.y+=3;
 if(p.y>canvas.height)p.y=0;
 });
 },20);
-
 setTimeout(()=>clearInterval(interval),3000);
 }
 
-/* SHAKE HEART RAIN */
+/* HEART RAIN */
 let lx,ly,lz;
 window.addEventListener("devicemotion",e=>{
 let acc=e.accelerationIncludingGravity;
@@ -298,7 +268,6 @@ if(delta>30)heartRain();
 }
 lx=acc.x;ly=acc.y;lz=acc.z;
 });
-
 function heartRain(){
 for(let i=0;i<15;i++){
 let h=document.createElement("div");
@@ -314,18 +283,11 @@ setTimeout(()=>h.remove(),3000);
 finalHeart.addEventListener("click",()=>{
 score++;
 document.getElementById("score").innerText=score;
-ehSound.currentTime=0;
-ehSound.play().catch(()=>{});
-finalHeart.classList.add("shake");
-setTimeout(()=>finalHeart.classList.remove("shake"),300);
-
 let w=gamePage.clientWidth;
 let h=gamePage.clientHeight;
 let size=finalHeart.offsetWidth;
-
 finalHeart.style.left=Math.random()*(w-size)+"px";
 finalHeart.style.top=Math.random()*(h-size)+"px";
-
 if(score>=target){
 gamePage.style.display="none";
 cakePage.style.display="flex";
@@ -341,13 +303,13 @@ const analyser=audioContext.createAnalyser();
 const mic=audioContext.createMediaStreamSource(stream);
 mic.connect(analyser);
 const data=new Uint8Array(analyser.frequencyBinCount);
-
 function detect(){
 analyser.getByteFrequencyData(data);
 let volume=data.reduce((a,b)=>a+b)/data.length;
 if(volume>50){
 candle.innerText="💨";
 finalMessage.style.display="block";
+setTimeout(()=>{startQuiz();},3000);
 }
 requestAnimationFrame(detect);
 }
@@ -355,12 +317,41 @@ detect();
 });
 }
 
-/* ENDING */
-function showEnding(){
+/* QUIZ */
+function startQuiz(){
+cakePage.style.display="none";
+quizPage.style.display="flex";
+document.getElementById("romanticMusic").volume=0.3;
+document.getElementById("romanticMusic").play().catch(()=>{});
+loadQuestion();
+}
+function loadQuestion(){
+if(quizIndex>=quizData.length){
+quizPage.style.display="none";
+document.getElementById("romanticMusic").pause();
 endingPhoto.style.display="flex";
+return;
+}
+document.getElementById("quizQuestion").innerText=quizData[quizIndex].question;
+let html="";
+quizData[quizIndex].options.forEach(opt=>{
+html+=`<button onclick="nextQuestion()">${opt}</button>`;
+});
+document.getElementById("quizOptions").innerHTML=html;
+}
+function nextQuestion(){
+showToast("Tetep bener kok 😌");
+setTimeout(()=>{
+quizIndex++;
+loadQuestion();
+},1200);
+}
+function showToast(text){
+let toast=document.getElementById("toastMsg");
+toast.innerText=text;
+toast.style.display="block";
+setTimeout(()=>{toast.style.display="none";},1500);
 }
 </script>
-
 </body>
 </html>
-
