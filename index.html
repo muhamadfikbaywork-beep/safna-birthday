@@ -1,61 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Untuk Safna 🤍</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-margin:0;
 font-family:sans-serif;
-text-align:center;
 background:linear-gradient(135deg,#ffdde1,#ee9ca7);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
 overflow:hidden;
-color:#333;
 }
 
+/* SECTION */
 section{
 display:none;
-padding:20px;
+width:100%;
+max-width:420px;
+height:100vh;
+padding:30px 20px;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:18px;
 }
 
-#passwordPage{display:block;}
+#passwordPage{display:flex;}
 
 input{
-padding:10px;
-border-radius:10px;
+width:100%;
+max-width:250px;
+padding:12px;
+border-radius:12px;
 border:none;
-margin-top:10px;
+text-align:center;
+font-size:16px;
 }
 
 button{
-padding:10px 20px;
+width:100%;
+max-width:220px;
+padding:12px;
+border-radius:25px;
 border:none;
-border-radius:20px;
 background:#ff4d6d;
 color:white;
-margin-top:10px;
-}
-
-#clue{
-margin-top:20px;
-animation:blink 1s infinite;
+font-size:16px;
+font-weight:bold;
 cursor:pointer;
 }
 
-@keyframes blink{
-0%{opacity:1;}
-50%{opacity:0.3;}
-100%{opacity:1;}
-}
-
 #loadingBar{
-width:80%;
+width:100%;
 height:20px;
 background:white;
 border-radius:20px;
-margin:20px auto;
 overflow:hidden;
 }
 
@@ -65,33 +71,61 @@ width:0%;
 background:#ff4d6d;
 }
 
+/* GAME */
+#gamePage{
+position:relative;
+}
+
 #finalHeart{
-width:90px;
-height:90px;
+position:absolute;
+width:95px;
+height:95px;
 border-radius:50%;
 object-fit:cover;
-position:absolute;
 cursor:pointer;
 box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
 @keyframes shake{
-0%{transform:rotate(0deg);}
+0%{transform:rotate(0);}
 25%{transform:rotate(-10deg);}
 50%{transform:rotate(10deg);}
 75%{transform:rotate(-10deg);}
-100%{transform:rotate(0deg);}
+100%{transform:rotate(0);}
 }
 
-.shake{
-animation:shake 0.3s;
+.shake{animation:shake 0.3s;}
+
+.aesthetic{
+font-family:Georgia,serif;
+line-height:1.8;
+animation:fadeIn 2s ease forwards;
+opacity:0;
 }
 
-canvas{
+@keyframes fadeIn{
+to{opacity:1;}
+}
+
+/* ENDING */
+#endingPhoto{
+display:none;
 position:fixed;
 top:0;
 left:0;
-pointer-events:none;
+width:100%;
+height:100%;
+background:black;
+color:white;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+#endingPhoto img{
+width:100%;
+height:80%;
+object-fit:cover;
 }
 </style>
 </head>
@@ -102,104 +136,86 @@ pointer-events:none;
 <section id="passwordPage">
 <h2>Masukin Password Dulu 💌</h2>
 <input type="password" id="passwordInput">
-<br>
 <button onclick="checkPassword()">Masuk</button>
-<div id="clue" onclick="showClue()">Clue? 🤭</div>
+<p onclick="showClue()" style="cursor:pointer;">Clue? 🤭</p>
 <p id="clueText"></p>
 </section>
 
 <!-- LOADING -->
 <section id="loadingPage">
 <h2>Loading Cinta... 💛</h2>
-<p>Aktifkan Sensor Cinta dulu yaa</p>
-<button onclick="activateSensor()">Aktifkan Sensor Cinta 💛</button>
+<button onclick="startLoading()">Mulai 💛</button>
 <div id="loadingBar"><div id="progress"></div></div>
 </section>
 
 <!-- GAME -->
 <section id="gamePage">
-<h2>Happy Birthday Safna 🎂</h2>
-<p>Klik muka Safna 15x yaa 😆</p>
-<p>Score: <span id="score">0</span></p>
+<h2>Klik muka Safna 15x 😆</h2>
+<p>Score: <span id="score">0</span> / 15</p>
 <img id="finalHeart" src="safna.jpg">
 </section>
 
 <!-- CAKE -->
 <section id="cakePage">
 <h2>Tiup Lilinnya 🎂</h2>
-<p>Tiup mic HP kamu yaaa 😆</p>
 <h1 id="candle">🕯️</h1>
-<h2 id="finalMessage" style="display:none;">
+
+<div id="finalMessage" class="aesthetic" style="display:none;">
 Selamat ulang tahun ya, Safna 🤍<br><br>
 Semoga semua doa baik yang kamu simpan diam-diam satu per satu jadi nyata.<br><br>
 Semoga kamu selalu dikelilingi hal-hal yang bikin kamu senyum…<br>
-walaupun jujur, aku berharap aku bisa jadi salah satu alasannya 😌✨<br><br>
-Hari ini Safna bertambah umur,<br>
-tapi tenang aja… kamu tetap manis kok, nggak nambah tua, cuma nambah spesial buat aku 💛
-</h2>
+dan semoga aku selalu jadi salah satu alasannya 😌✨<br><br>
+<button onclick="showEnding()">Lihat Ending 🤍</button>
+</div>
 </section>
 
-<audio id="birthdaySong" src="https://www2.cs.uic.edu/~i101/SoundFiles/HappyBirthday.mid"></audio>
+<div id="endingPhoto">
+<img src="kita.jpg">
+<h1>Kita 🤍</h1>
+</div>
+
 <audio id="ehSound" src="https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3"></audio>
 
 <script>
 let progress=0;
-let interval;
 let score=0;
 let target=15;
 
+/* PASSWORD */
 function checkPassword(){
-if(document.getElementById("passwordInput").value==="SayangFikri"){
+if(document.getElementById("passwordInput").value==="123"){
 document.getElementById("passwordPage").style.display="none";
-document.getElementById("loadingPage").style.display="block";
+document.getElementById("loadingPage").style.display="flex";
 }else{
 alert("Salah 😜");
 }
 }
 
 function showClue(){
-document.getElementById("clueText").innerText="Cluenya... mungkin ada kata Sayang dan nama kamu 😏";
+document.getElementById("clueText").innerText="Clue: gabungan Sayang + Fikri 😉";
 }
 
-function activateSensor(){
-window.addEventListener("deviceorientation",handleOrientation);
-interval=setInterval(normalLoad,100);
-}
-
-function normalLoad(){
+/* LOADING */
+function startLoading(){
+let interval=setInterval(()=>{
 if(progress<100){
-progress+=1;
-updateProgress();
-}
-}
-
-function handleOrientation(event){
-let tilt=event.gamma;
-if(tilt>10) progress+=3;
-if(tilt<-10) progress-=2;
-if(progress<0)progress=0;
-if(progress>100)progress=100;
-updateProgress();
-}
-
-function updateProgress(){
+progress+=2;
 document.getElementById("progress").style.width=progress+"%";
-if(progress>=100){
+}else{
 clearInterval(interval);
-startGame();
-}
-}
-
-function startGame(){
 document.getElementById("loadingPage").style.display="none";
-document.getElementById("gamePage").style.display="block";
-document.getElementById("birthdaySong").play().catch(()=>{});
+document.getElementById("gamePage").style.display="flex";
+}
+},100);
 }
 
+/* GAME */
 const heart=document.getElementById("finalHeart");
+const gamePage=document.getElementById("gamePage");
 const ehSound=document.getElementById("ehSound");
 
-heart.onclick=function(){
+heart.addEventListener("click",function(){
+
 score++;
 document.getElementById("score").innerText=score;
 
@@ -209,16 +225,24 @@ ehSound.play().catch(()=>{});
 heart.classList.add("shake");
 setTimeout(()=>heart.classList.remove("shake"),300);
 
-heart.style.top=Math.random()*(window.innerHeight-100)+"px";
-heart.style.left=Math.random()*(window.innerWidth-100)+"px";
+let areaWidth=gamePage.clientWidth;
+let areaHeight=gamePage.clientHeight;
+let size=heart.offsetWidth;
+
+let x=Math.random()*(areaWidth-size);
+let y=Math.random()*(areaHeight-size);
+
+heart.style.left=x+"px";
+heart.style.top=y+"px";
 
 if(score>=target){
-document.getElementById("gamePage").style.display="none";
-document.getElementById("cakePage").style.display="block";
+gamePage.style.display="none";
+document.getElementById("cakePage").style.display="flex";
 startMic();
 }
-};
+});
 
+/* MIC */
 function startMic(){
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
 const audioContext=new AudioContext();
@@ -238,6 +262,11 @@ requestAnimationFrame(detect);
 }
 detect();
 });
+}
+
+/* ENDING */
+function showEnding(){
+document.getElementById("endingPhoto").style.display="flex";
 }
 </script>
 
