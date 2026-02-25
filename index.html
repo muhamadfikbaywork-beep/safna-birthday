@@ -33,6 +33,7 @@ position:absolute;
 top:0;
 left:50%;
 transform:translateX(-50%);
+z-index:1;
 }
 
 #passwordPage{display:flex}
@@ -71,8 +72,6 @@ width:0%;
 background:#ff4d6d;
 transition:0.2s;
 }
-
-#tiltMessage{min-height:24px;font-weight:bold}
 
 #finalHeart{
 position:absolute;
@@ -125,6 +124,7 @@ padding:10px 20px;
 border-radius:20px;
 display:none;
 font-weight:bold;
+z-index:20;
 }
 
 canvas{
@@ -132,6 +132,7 @@ position:fixed;
 top:0;
 left:0;
 pointer-events:none;
+z-index:0;
 }
 </style>
 </head>
@@ -189,16 +190,18 @@ Dan semoga aku selalu jadi alasan kamu senyum 😌✨
 let progress=0,score=0,target=15;
 let normalInterval,quizIndex=0;
 
-/* AUTO MUSIC START */
-window.addEventListener("click",()=>{
-let music=document.getElementById("romanticMusic");
+/* MUSIC FIX SAFARI */
+const music=document.getElementById("romanticMusic");
+function startMusic(){
 music.volume=0.4;
 music.play().catch(()=>{});
-},{once:true});
+document.removeEventListener("touchstart",startMusic);
+}
+document.addEventListener("touchstart",startMusic,{once:true});
 
 /* PASSWORD */
 function checkPassword(){
-if(passwordInput.value==="123"){
+if(passwordInput.value==="SayangFikri"){
 passwordPage.style.display="none";
 loadingPage.style.display="flex";
 }else alert("Salah 😜");
@@ -211,18 +214,12 @@ clueText.innerText="Clue: Sayang + Fikri 😉";
 function startLoading(){
 progress=0;
 updateProgress();
-normalInterval=setInterval(()=>{
-progress+=1;
-updateProgress();
-},120);
+normalInterval=setInterval(()=>{progress+=1;updateProgress();},120);
 
 window.addEventListener("deviceorientation",(e)=>{
 let tilt=e.gamma;
 if(tilt>15)progress+=3;
 if(tilt<-15)progress-=3;
-if(tilt>45)tiltMessage.innerText="WOI santai 😆";
-else if(tilt<-45)tiltMessage.innerText="Jangan dibalik 😭";
-else tiltMessage.innerText="";
 });
 }
 
@@ -237,32 +234,45 @@ launchConfetti();
 setTimeout(()=>{
 loadingPage.style.display="none";
 gamePage.style.display="flex";
-},2000);
+},3000);
 }
 }
 
-/* CONFETTI */
+/* CONFETTI FIX */
 function launchConfetti(){
 let canvas=document.getElementById("confetti");
 let ctx=canvas.getContext("2d");
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
 let pieces=[];
 for(let i=0;i<120;i++){
-pieces.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+3});
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*6+3,
+speed:Math.random()*3+2
+});
 }
-let anim=setInterval(()=>{
+
+let anim;
+function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="#ff4d6d";
 pieces.forEach(p=>{
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 ctx.fill();
-p.y+=3;
-if(p.y>canvas.height)p.y=0;
+p.y+=p.speed;
 });
-},20);
-setTimeout(()=>clearInterval(anim),3000);
+anim=requestAnimationFrame(draw);
+}
+draw();
+
+setTimeout(()=>{
+cancelAnimationFrame(anim);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+},3000);
 }
 
 /* GAME */
@@ -282,7 +292,7 @@ startMic();
 }
 }
 
-/* MIC */
+/* MIC FIX */
 function startMic(){
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
 const audioContext=new AudioContext();
@@ -341,7 +351,6 @@ quizOptions.appendChild(btn);
 });
 }
 
-/* TOAST */
 function showToast(text){
 let toast=document.getElementById("toastMsg");
 toast.innerText=text;
@@ -352,4 +361,3 @@ setTimeout(()=>{toast.style.display="none";},1500);
 
 </body>
 </html>
-
