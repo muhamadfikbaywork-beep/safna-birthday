@@ -307,7 +307,12 @@ let volume=data.reduce((a,b)=>a+b)/data.length;
 if(volume>25){
 candle.innerText="💨";
 finalMessage.style.display="block";
-setTimeout(()=>{startQuiz();},3000);
+
+/* JEDA 8 DETIK BUAT BACA */
+setTimeout(()=>{
+startQuiz();
+},8000);
+
 return;
 }
 requestAnimationFrame(detect);
@@ -361,5 +366,6 @@ setTimeout(()=>{toast.style.display="none";},1500);
 
 </body>
 </html>
+
 
 
